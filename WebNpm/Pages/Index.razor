@@ -1,0 +1,116 @@
+﻿@page "/"
+@inject IJSRuntime JSRuntime;
+
+
+<h1>CKKS ENCRYPTION!</h1>
+
+<br />
+
+<button class="btn btn-primary" @onclick="CKKS">CKKS Encryption</button>
+<br />
+<br />
+@if (result1 == null && bValue == true)
+{
+    <img src="/Image/spin.gif" />
+}
+else if(bValue == true)
+{
+<table class="styled-table table-bordered">
+    <caption style="text-align:center">Average</caption>
+    <thead>
+        <tr>
+            <td>polyModulusDegree</td>
+            <td>encode</td>
+            <td>decode</td>
+            <td>encrypt</td>
+            <td>decrypt</td>
+            <td>add</td>
+            <td>multiply</td>
+            <td>multiply plain</td>
+            <td>square</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>4096</td>
+            @foreach (var item in sValue[0..8])
+            {
+                <td>@item <span>&#181</span>s</td>
+            }
+        </tr>
+        <tr>
+            <td>8192</td>
+            @foreach (var item in sValue[15..23])
+            {
+                <td>@item <span>&#181</span>s</td>
+            }
+        </tr>
+        <tr>
+            <td>16384</td>
+            @foreach (var item in sValue[30..38])
+            {
+               <td>@item <span>&#181</span>s</td>
+            }
+        </tr>
+    </tbody>    
+</table>
+<table class="styled-table table-bordered">
+    <caption style="text-align:center">Average</caption>
+    <thead>
+        <tr>
+            <td>polyModulusDegree</td>
+            <td>Relinearize</td>
+            <td>Rescale</td>
+            <td>RotateOneStep</td>
+            <td>RotateRandom</td>
+            <td>Conjugate</td>
+            <td>SumElements</td>
+            <td>DotProduct</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>4096</td>
+            @foreach (var item in sValue[8..15])
+            {
+
+                <td>@item <span>&#181</span>s</td>
+            }
+        </tr>
+        <tr>
+            <td>8192</td>
+            @foreach (var item in sValue[23..30])
+            {
+
+                <td>@item <span>&#181</span>s</td>
+            }
+        </tr>
+        <tr>
+            <td>16384</td>
+            @foreach (var item in sValue[38..45])
+            {
+               <td>@item <span>&#181</span>s</td>
+            }
+        </tr>
+    </tbody>
+</table>
+   
+}
+
+@code {
+
+    public static string result1 = null;
+    public bool bValue = false;
+    public string[] sValue;
+    public int count = 0;
+    public string[] sValue1;
+    async Task CKKS()
+    {
+        bValue = true;
+        result1 = await JSRuntime.InvokeAsync<string>("CKKS_Sample");
+
+        sValue = result1.Split(',', '\n');
+    }
+
+}
+
