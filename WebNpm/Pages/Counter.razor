@@ -1,19 +1,25 @@
 ﻿@page "/counter"
 @inject IJSRuntime JSRuntime;
-
+@inject Blazored.LocalStorage.ILocalStorageService localStorage;
+@inject Blazored.LocalStorage.ILocalStorageService bfvStopWatchStorage;
+@inject NavigationManager uriHelper;
+@using System.Threading;
+@using System.Diagnostics;
 
 <h1>BFV ENCRYPTION!</h1>
 
 <br />
-
 <button class="btn btn-primary" @onclick="BFV">BFV Encryption</button>
+<button class="btn btn-primary" @onclick="ClearLocalStorage">Clear</button>
 <br />
 <br />
-@if (result2 == null && bValue == true)
+<div style="color:red; font-size:20px; font-weight:bold;font-family:'Orbitron'">@elapsedTime</div>
+@if (result == null && bValue == true)
 {
-    <img src="/Image/spin.gif" />
+    <img src="/Image/example-trefoil.gif" />
 }
-else if (bValue == true)
+
+@if (sValue != null)
 {
     <table class="styled-table table-bordered">
         <caption style="text-align:center">Average</caption>
@@ -35,21 +41,30 @@ else if (bValue == true)
                 <td>4096</td>
                 @foreach (var item in sValue[0..8])
                 {
-                    <td>@item <span>&#181</span>s</td>
+                    @if (item != null)
+                    {
+                        <td>@item <span>&#181</span>s</td>
+                    }
                 }
             </tr>
             <tr>
-                <td>8192</td>
+                <td>81192</td>
                 @foreach (var item in sValue[15..23])
                 {
-                    <td>@item <span>&#181</span>s</td>
+                    @if (item != null)
+                    {
+                        <td>@item <span>&#181</span>s</td>
+                    }
                 }
             </tr>
             <tr>
                 <td>16384</td>
                 @foreach (var item in sValue[30..38])
                 {
-                    <td>@item <span>&#181</span>s</td>
+                    @if (item != null)
+                    {
+                        <td>@item <span>&#181</span>s</td>
+                    }
                 }
             </tr>
         </tbody>
@@ -73,40 +88,79 @@ else if (bValue == true)
                 <td>4096</td>
                 @foreach (var item in sValue[8..15])
                 {
-
-                    <td>@item <span>&#181</span>s</td>
+                    @if (item != null)
+                    {
+                        <td>@item <span>&#181</span>s</td>
+                    }
                 }
             </tr>
             <tr>
-                <td>8192</td>
+                <td>81192</td>
                 @foreach (var item in sValue[23..30])
                 {
-
-                    <td>@item <span>&#181</span>s</td>
+                    @if (item != null)
+                    {
+                        <td>@item <span>&#181</span>s</td>
+                    }
                 }
             </tr>
             <tr>
                 <td>16384</td>
                 @foreach (var item in sValue[38..45])
                 {
-                    <td>@item <span>&#181</span>s</td>
+                    @if (item != null)
+                    {
+                        <td>@item <span>&#181</span>s</td>
+                    }
                 }
             </tr>
         </tbody>
     </table>
-
 }
 
 @code {
-    public string result2 = null;
+    public string result = null;
     public bool bValue = false;
-    public string[] sValue;
-
-    async Task BFV()
+    public string[] sValue = new string[46];
+    public string elapsedTime = "";
+    public async Task BFV()
     {
         bValue = true;
-        result2 = await JSRuntime.InvokeAsync<string>("BFV_Encryption");
-        sValue = result2.Split(',', '\n');
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+        result = await JSRuntime.InvokeAsync<string>("BFV_Encryption");
+        if (result != null)
+        {
+            sValue = result.Split(',', '\n');
+            await localStorage.SetItemAsync("avgBatch", sValue);
+            sValue = await localStorage.GetItemAsync<string[]>("avgBatch");
+            stopwatch.Stop();
+            TimeSpan ts = stopwatch.Elapsed;
+            elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+               ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+            await bfvStopWatchStorage.SetItemAsync("bfvStopWatch", elapsedTime);
+            elapsedTime = await bfvStopWatchStorage.GetItemAsync<string>("bfvStopWatch");
+        }
+        else
+        {
+            bValue = false;
+        }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        sValue = await localStorage.GetItemAsync<string[]>("avgBatch");
+        elapsedTime = await bfvStopWatchStorage.GetItemAsync<string>("bfvStopWatch");
+    }
+    public async void ClearLocalStorage()
+    {
+        await localStorage.ClearAsync();
+        var timer = new Timer(new TimerCallback(_ =>
+        {
+            uriHelper.NavigateTo(uriHelper.Uri, forceLoad: true);
+
+        }), null, 500, 500);
     }
 
 }

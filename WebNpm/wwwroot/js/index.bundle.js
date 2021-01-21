@@ -83,45 +83,49 @@
 }
 //CKK Encryption
 window.CKKS_Sample = async function () {
-    alert("Example: CKKS");
-    const Seal  = __webpack_require__(0);
-    const Crypt = await Seal();
-    console.log(Crypt);
-    const parms = Crypt.EncryptionParameters(Crypt.SchemeType.ckks)
-    let polyModulusDegree = 4096
-    let coeffModulus = Crypt.CoeffModulus.BFVDefault(polyModulusDegree)
-    parms.setPolyModulusDegree(polyModulusDegree)
-    parms.setCoeffModulus(coeffModulus)
-    let context = Crypt.Context(parms)
-    let result = ckksPerformanceTest(context, Crypt)
-    result +=  "\n"
+    //alert("Example: CKKS");
+    var answer = window.confirm("Do you want to try CKKS Encryption");
+    if (answer) {
+        const Seal = __webpack_require__(0);
+        const Crypt = await Seal();
+        console.log(Crypt);
+        const parms = Crypt.EncryptionParameters(Crypt.SchemeType.ckks)
+        let polyModulusDegree = 4096
+        let coeffModulus = Crypt.CoeffModulus.BFVDefault(polyModulusDegree)
+        parms.setPolyModulusDegree(polyModulusDegree)
+        parms.setCoeffModulus(coeffModulus)
+        let context = Crypt.Context(parms)
+        let result = ckksPerformanceTest(context, Crypt)
+        result += "\n"
 
-    context.delete()
-    coeffModulus.delete()
+        context.delete()
+        coeffModulus.delete()
 
-    polyModulusDegree = 8192
-    coeffModulus = Crypt.CoeffModulus.BFVDefault(polyModulusDegree)
-    parms.setPolyModulusDegree(polyModulusDegree)
-    parms.setCoeffModulus(coeffModulus)
-    context = Crypt.Context(parms)
-    result = result + ckksPerformanceTest(context, Crypt)
-    result += "\n"
-    context.delete()
-    coeffModulus.delete()
+        polyModulusDegree = 8192
+        coeffModulus = Crypt.CoeffModulus.BFVDefault(polyModulusDegree)
+        parms.setPolyModulusDegree(polyModulusDegree)
+        parms.setCoeffModulus(coeffModulus)
+        context = Crypt.Context(parms)
+        result = result + ckksPerformanceTest(context, Crypt)
+        result += "\n"
+        context.delete()
+        coeffModulus.delete()
 
-    polyModulusDegree = 16384
-    coeffModulus = Crypt.CoeffModulus.BFVDefault(polyModulusDegree)
-    parms.setPolyModulusDegree(polyModulusDegree)
-    parms.setCoeffModulus(coeffModulus)
-    context = Crypt.Context(parms)
-    result = result + ckksPerformanceTest(context, Crypt)
+        polyModulusDegree = 16384
+        coeffModulus = Crypt.CoeffModulus.BFVDefault(polyModulusDegree)
+        parms.setPolyModulusDegree(polyModulusDegree)
+        parms.setCoeffModulus(coeffModulus)
+        context = Crypt.Context(parms)
+        result = result + ckksPerformanceTest(context, Crypt)
 
-    context.delete()
-    coeffModulus.delete()
+        context.delete()
+        coeffModulus.delete()
 
-    context.delete()
-    coeffModulus.delete()
-    return result;
+        context.delete()
+        coeffModulus.delete()
+        return result;
+    }
+   
 }
 
 function ckksPerformanceTest(context, Crypt) {
@@ -425,54 +429,56 @@ function ckksPerformanceTest(context, Crypt) {
 
 //BFV Encryption
 window.BFV_Encryption = async function () {
-    alert("Example: BFV");
-    const Seal = __webpack_require__(0);
-    const Crypt = await Seal();
-    console.log(Crypt);
-    const parms = Crypt.EncryptionParameters(Crypt.SchemeType.bfv)
-    let polyModulusDegree = 4096
-    let modulus = Crypt.Modulus('786433')
-    let coeffModulus = Crypt.CoeffModulus.BFVDefault(polyModulusDegree)
-    parms.setPolyModulusDegree(polyModulusDegree)
-    parms.setCoeffModulus(coeffModulus)
-    parms.setPlainModulus(modulus)
-    let context = Crypt.Context(parms)
-    let result = bfvPerformanceTest(context, Crypt)
-    result += "\n"
+    var answer = window.confirm("Do you want to try BFV Encryption");
+    if (answer) {
+        const Seal = __webpack_require__(0);
+        const Crypt = await Seal();
+        console.log(Crypt);
+        const parms = Crypt.EncryptionParameters(Crypt.SchemeType.bfv)
+        let polyModulusDegree = 4096
+        let modulus = Crypt.Modulus('786433')
+        let coeffModulus = Crypt.CoeffModulus.BFVDefault(polyModulusDegree)
+        parms.setPolyModulusDegree(polyModulusDegree)
+        parms.setCoeffModulus(coeffModulus)
+        parms.setPlainModulus(modulus)
+        let context = Crypt.Context(parms)
+        let result = bfvPerformanceTest(context, Crypt)
+        result += "\n"
 
-    //Clear daa to prevent memory buildup
-    context.delete()
-    modulus.delete()
-    coeffModulus.delete()
+        //Clear daa to prevent memory buildup
+        context.delete()
+        modulus.delete()
+        coeffModulus.delete()
 
-    polyModulusDegree = 8192
-    modulus = Crypt.Modulus('786433')
-    coeffModulus = Crypt.CoeffModulus.BFVDefault(polyModulusDegree)
-    parms.setPolyModulusDegree(polyModulusDegree)
-    parms.setCoeffModulus(coeffModulus)
-    parms.setPlainModulus(modulus)
-    context = Crypt.Context(parms)
-    result = result + bfvPerformanceTest(context, Crypt)
-    result += "\n"
+        polyModulusDegree = 8192
+        modulus = Crypt.Modulus('786433')
+        coeffModulus = Crypt.CoeffModulus.BFVDefault(polyModulusDegree)
+        parms.setPolyModulusDegree(polyModulusDegree)
+        parms.setCoeffModulus(coeffModulus)
+        parms.setPlainModulus(modulus)
+        context = Crypt.Context(parms)
+        result = result + bfvPerformanceTest(context, Crypt)
+        result += "\n"
 
-    context.delete()
-    coeffModulus.delete()
-    coeffModulus.delete()
+        context.delete()
+        coeffModulus.delete()
+        coeffModulus.delete()
 
-    polyModulusDegree = 16384
-    modulus = Crypt.Modulus('786433')
-    coeffModulus = Crypt.CoeffModulus.BFVDefault(polyModulusDegree)
-    parms.setPolyModulusDegree(polyModulusDegree)
-    parms.setCoeffModulus(coeffModulus)
-    parms.setPlainModulus(modulus)
-    context = Crypt.Context(parms)
-    result = result + bfvPerformanceTest(context, Crypt)
+        polyModulusDegree = 16384
+        modulus = Crypt.Modulus('786433')
+        coeffModulus = Crypt.CoeffModulus.BFVDefault(polyModulusDegree)
+        parms.setPolyModulusDegree(polyModulusDegree)
+        parms.setCoeffModulus(coeffModulus)
+        parms.setPlainModulus(modulus)
+        context = Crypt.Context(parms)
+        result = result + bfvPerformanceTest(context, Crypt)
 
-    context.delete()
-    coeffModulus.delete()
-    modulus.delete()
+        context.delete()
+        coeffModulus.delete()
+        modulus.delete()
 
-    return result;
+        return result;
+    }
 }
 
 

@@ -1,115 +1,153 @@
 ﻿@page "/"
 @inject IJSRuntime JSRuntime;
-
+@inject Blazored.LocalStorage.ILocalStorageService ckkslocalStorage;
+@inject Blazored.LocalStorage.ILocalStorageService ckksStopWatchStorage;
+@inject NavigationManager uriHelper;
+@using System.Threading;
+@using System.Diagnostics;
 
 <h1>CKKS ENCRYPTION!</h1>
 
 <br />
-
 <button class="btn btn-primary" @onclick="CKKS">CKKS Encryption</button>
+<button class="btn btn-primary" @onclick="ClearSessionStorage">Clear</button>
 <br />
 <br />
-@if (result1 == null && bValue == true)
+<div style="color:red; font-size:20px; font-weight:bold;font-family:'Orbitron'">@elapsedTime</div>
+@if (result == null && bValue == true)
 {
-    <img src="/Image/spin.gif" />
+    <img src="/Image/example-trefoil.gif" />
 }
-else if(bValue == true)
+@if (sValue != null)
 {
-<table class="styled-table table-bordered">
-    <caption style="text-align:center">Average</caption>
-    <thead>
-        <tr>
-            <td>polyModulusDegree</td>
-            <td>encode</td>
-            <td>decode</td>
-            <td>encrypt</td>
-            <td>decrypt</td>
-            <td>add</td>
-            <td>multiply</td>
-            <td>multiply plain</td>
-            <td>square</td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>4096</td>
-            @foreach (var item in sValue[0..8])
-            {
-                <td>@item <span>&#181</span>s</td>
-            }
-        </tr>
-        <tr>
-            <td>8192</td>
-            @foreach (var item in sValue[15..23])
-            {
-                <td>@item <span>&#181</span>s</td>
-            }
-        </tr>
-        <tr>
-            <td>16384</td>
-            @foreach (var item in sValue[30..38])
-            {
-               <td>@item <span>&#181</span>s</td>
-            }
-        </tr>
-    </tbody>    
-</table>
-<table class="styled-table table-bordered">
-    <caption style="text-align:center">Average</caption>
-    <thead>
-        <tr>
-            <td>polyModulusDegree</td>
-            <td>Relinearize</td>
-            <td>Rescale</td>
-            <td>RotateOneStep</td>
-            <td>RotateRandom</td>
-            <td>Conjugate</td>
-            <td>SumElements</td>
-            <td>DotProduct</td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>4096</td>
-            @foreach (var item in sValue[8..15])
-            {
+    <table class="styled-table table-bordered">
+        <caption style="text-align:center">Average</caption>
+        <thead>
+            <tr>
+                <td>polyModulusDegree</td>
+                <td>encode</td>
+                <td>decode</td>
+                <td>encrypt</td>
+                <td>decrypt</td>
+                <td>add</td>
+                <td>multiply</td>
+                <td>multiply plain</td>
+                <td>square</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>4096</td>
+                @foreach (var item in sValue[0..8])
+                {
+                    <td>@item <span>&#181</span>s</td>
+                }
+            </tr>
+            <tr>
+                <td>8192</td>
+                @foreach (var item in sValue[15..23])
+                {
+                    <td>@item <span>&#181</span>s</td>
+                }
+            </tr>
+            <tr>
+                <td>16384</td>
+                @foreach (var item in sValue[30..38])
+                {
+                    <td>@item <span>&#181</span>s</td>
+                }
+            </tr>
+        </tbody>
+    </table>
+    <table class="styled-table table-bordered">
+        <caption style="text-align:center">Average</caption>
+        <thead>
+            <tr>
+                <td>polyModulusDegree</td>
+                <td>Relinearize</td>
+                <td>Rescale</td>
+                <td>RotateOneStep</td>
+                <td>RotateRandom</td>
+                <td>Conjugate</td>
+                <td>SumElements</td>
+                <td>DotProduct</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>4096</td>
+                @foreach (var item in sValue[8..15])
+                {
 
-                <td>@item <span>&#181</span>s</td>
-            }
-        </tr>
-        <tr>
-            <td>8192</td>
-            @foreach (var item in sValue[23..30])
-            {
+                    <td>@item <span>&#181</span>s</td>
+                }
+            </tr>
+            <tr>
+                <td>8192</td>
+                @foreach (var item in sValue[23..30])
+                {
 
-                <td>@item <span>&#181</span>s</td>
-            }
-        </tr>
-        <tr>
-            <td>16384</td>
-            @foreach (var item in sValue[38..45])
-            {
-               <td>@item <span>&#181</span>s</td>
-            }
-        </tr>
-    </tbody>
-</table>
-   
+                    <td>@item <span>&#181</span>s</td>
+                }
+            </tr>
+            <tr>
+                <td>16384</td>
+                @foreach (var item in sValue[38..45])
+                {
+                    <td>@item <span>&#181</span>s</td>
+                }
+            </tr>
+        </tbody>
+    </table>
+
 }
 
 @code {
 
-    public static string result1 = null;
+    public static string result = null;
     public bool bValue = false;
-    public string[] sValue;
-    public int count = 0;
-    public string[] sValue1;
-    async Task CKKS()
+    public string[] sValue = new string[46];
+    public string elapsedTime;
+
+    public async Task CKKS()
     {
         bValue = true;
-        result1 = await JSRuntime.InvokeAsync<string>("CKKS_Sample");
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+        result = await JSRuntime.InvokeAsync<string>("CKKS_Sample");
+        if (result != null)
+        {
+            sValue = result.Split(',', '\n');
+            await ckkslocalStorage.SetItemAsync("avgBatchCkks", sValue);
+            sValue = await ckkslocalStorage.GetItemAsync<string[]>("avgBatchCkks");
+            stopwatch.Stop();
+            TimeSpan ts = stopwatch.Elapsed;
+            elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+               ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+            await ckksStopWatchStorage.SetItemAsync("ckksStopWatch", elapsedTime);
+            elapsedTime = await ckksStopWatchStorage.GetItemAsync<string>("ckksStopWatch");
+        }
+        else
+        {
+            bValue = false;
+        }
 
-        sValue = result1.Split(',', '\n');
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        sValue = await ckkslocalStorage.GetItemAsync<string[]>("avgBatchCkks");
+        elapsedTime = await ckksStopWatchStorage.GetItemAsync<string>("ckksStopWatch");
+    }
+
+    public async void ClearSessionStorage()
+    {
+        await ckkslocalStorage.ClearAsync();
+        var timer = new Timer(new TimerCallback(_ =>
+        {
+            uriHelper.NavigateTo(uriHelper.Uri, forceLoad: true);
+
+        }), null, 500, 500);
     }
 
 }
