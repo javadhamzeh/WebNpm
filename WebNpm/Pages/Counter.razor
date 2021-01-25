@@ -14,7 +14,7 @@
 <br />
 <br />
 <div style="color:red; font-size:20px; font-weight:bold;font-family:'Orbitron'">@elapsedTime</div>
-@if (result == null && bValue == true)
+@if (bValue == true)
 {
     <img src="/Image/example-trefoil.gif" />
 }
@@ -141,10 +141,7 @@
             await bfvStopWatchStorage.SetItemAsync("bfvStopWatch", elapsedTime);
             elapsedTime = await bfvStopWatchStorage.GetItemAsync<string>("bfvStopWatch");
         }
-        else
-        {
-            bValue = false;
-        }
+        bValue = false;
 
     }
 

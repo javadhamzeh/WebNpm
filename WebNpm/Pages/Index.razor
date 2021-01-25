@@ -127,11 +127,8 @@
             await ckksStopWatchStorage.SetItemAsync("ckksStopWatch", elapsedTime);
             elapsedTime = await ckksStopWatchStorage.GetItemAsync<string>("ckksStopWatch");
         }
-        else
-        {
-            bValue = false;
-        }
-
+        result = null;
+        bValue = false;
     }
 
     protected override async Task OnInitializedAsync()

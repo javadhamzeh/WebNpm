@@ -12,7 +12,6 @@ h1 {
     font-family: sans-serif;
     min-width: 400px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    z-index:99;
 }
 .styled-table thead tr {
     background-color: #009879;
@@ -177,7 +176,12 @@ app {
     right: 0.75rem;
     top: 0.5rem;
 }
-
+.encrypt {
+    text-shadow: 2px 4px 3px rgba(0,0,0,0.3) !important;
+    text-align: center;
+    vertical-align:middle;
+    font-weight:bolder;
+}
 
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {
